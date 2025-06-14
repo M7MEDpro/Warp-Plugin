@@ -20,12 +20,19 @@ public class YmlData {
     }
 
     public void save(UUID playerUUID, Location location, String warpname) throws IOException {
-        String path = "warps." + playerUUID + "." + warpname;
-        warpConfig.set(path + ".world", location.getWorld().getName());
-        warpConfig.set(path + ".x", location.getX());
-        warpConfig.set(path + ".y", location.getY());
-        warpConfig.set(path + ".z", location.getZ());
-        warpConfig.save(warpFile);
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), () -> {
+            String path = "warps." + playerUUID + "." + warpname;
+            warpConfig.set(path + ".world", location.getWorld().getName());
+            warpConfig.set(path + ".x", location.getX());
+            warpConfig.set(path + ".y", location.getY());
+            warpConfig.set(path + ".z", location.getZ());
+            try {
+                warpConfig.save(warpFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
     public Location getLocation(UUID playerUUID, String warpname) {
